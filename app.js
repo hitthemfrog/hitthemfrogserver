@@ -14,7 +14,6 @@ io.on('connection', function(socket){
   socket.on('join-room-1', function(){
     if (!io.nsps['/'].adapter.rooms['room-1']) {
       socket.join('room-1');
-      console.log(io.nsps['/'].adapter);
       console.log('masuk room 1');
     } else if (io.nsps['/'].adapter.rooms['room-1']['length'] < 2) {
       socket.join('room-1');
@@ -22,8 +21,14 @@ io.on('connection', function(socket){
     } else {
       console.log('udah penuh bang');
     }
-    
   })
+
+  socket.on('checkPlayer', function() {
+    let roomsKeys = Object.keys(io.nsps['/'].adapter.rooms);
+    let roomName = roomsKeys[roomsKeys.length-1];
+    let playerAmount = io.nsps['/'].adapter.rooms[roomName]['length'];
+    io.to(roomName).emit('checkPlayer', playerAmount);
+  });
 
   socket.on('increment', function(value){
     let roomsKeys = Object.keys(io.nsps['/'].adapter.rooms);
@@ -34,7 +39,6 @@ io.on('connection', function(socket){
   socket.on('join-room-2', function(){
     if (!io.nsps['/'].adapter.rooms['room-2']) {
       socket.join('room-2');
-      console.log(Object.keys(io.nsps['/'].adapter.rooms)[Object.keys(io.nsps['/'].adapter.rooms).length-1]);
       console.log('masuk room 2');
     } else if (io.nsps['/'].adapter.rooms['room-2']['length'] < 3) {
       socket.join('room-2');
