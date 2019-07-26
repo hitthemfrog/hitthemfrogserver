@@ -11,16 +11,17 @@ app.get('/', (req, res, next) => {
 io.on('connection', function(socket){
   console.log('a user connected');
   
-  socket.on('join-room-1', function(cb){
-    if (!io.nsps['/'].adapter.rooms['room-1']) {
-      socket.join('room-1');
-
+  socket.on('join-room', function(roomName, cb){
+    console.log('ini dari server', roomName);
+    
+    if (!io.nsps['/'].adapter.rooms['roomName']) {
+      socket.join(roomName);-
       // console.log('dari server',io.nsps['/'].adapter);
       console.log('masuk room 1');
       cb(true)
-    } else if (io.nsps['/'].adapter.rooms['room-1']['length'] < 2) {
-      socket.join('room-1');
-      console.log('masuk room 1');
+    } else if (io.nsps['/'].adapter.rooms[roomName]['length'] < 2) {
+      socket.join(roomName);
+      console.log(`masuk ${roomName}`);
       cb(true)
     } else {
       cb(false)
@@ -49,20 +50,6 @@ io.on('connection', function(socket){
     let roomsKeys = Object.keys(io.nsps['/'].adapter.rooms);
     let roomName = roomsKeys[roomsKeys.length-1];
     io.to(roomName).emit('increment', value);
-  })
-
-  socket.on('join-room-2', function(cb){
-    if (!io.nsps['/'].adapter.rooms['room-2']) {
-      socket.join('room-2');
-      console.log('masuk room 2');
-      cb(true)
-    } else if (io.nsps['/'].adapter.rooms['room-2']['length'] < 3) {
-      socket.join('room-2');
-      cb(true)
-      console.log('masuk room 2');
-    } else {
-      cb(false)
-    }
   })
   
   socket.on('setCounter', function() {
