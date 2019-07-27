@@ -2,7 +2,7 @@ const io = require('socket.io-client');
 const chai = require('chai');
 let socket;
 
-describe('Socket test suit', function () {
+describe('Socket test suit for Room', function () {
   beforeEach(function (done) {
     socket1 = io('http://localhost:3000', {
       forceNew: true
@@ -91,4 +91,17 @@ describe('Socket test suit', function () {
       });
     });
   })
+
+  test('check user in the room after one user joined, should return 1 ', function (done) {
+    socket1.emit(`join-room`, 'room-1',function(value){
+      socket1.emit(`checkPlayer`);
+    });
+
+    socket1.on(`checkPlayer`, function(value){
+      expect(value).toEqual(1);
+      done();
+    })
+
+  });
+
 });
