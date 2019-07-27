@@ -92,7 +92,7 @@ describe('Socket test suit for Room', function () {
     });
   })
 
-  test('check user in the room after one user joined, should return 1 ', function (done) {
+  test("check user in the room after one user joined, value of user's callback param should be 1 ", function (done) {
     socket1.emit(`join-room`, 'room-1',function(value){
       socket1.emit(`checkPlayer`);
     });
@@ -101,6 +101,23 @@ describe('Socket test suit for Room', function () {
       expect(value).toEqual(1);
       done();
     })
+  });
+
+  test("check user in the room after two user joined same room, value of both user's callback param should be 2 ", function (done) {
+    socket1.emit(`join-room`, 'room-1',function(value){
+      socket2.emit(`join-room`, 'room-1',function(value){
+        
+        socket1.on(`checkPlayer`, function(value1){
+          expect(value1).toEqual(2);
+          socket2.on(`checkPlayer`, function(value2){
+            expect(value2).toEqual(2);
+            done();
+          })
+        })
+        socket1.emit(`checkPlayer`);
+        socket2.emit(`checkPlayer`);
+      });
+    });
 
   });
 
