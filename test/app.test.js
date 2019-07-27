@@ -2,9 +2,7 @@ const io = require('socket.io-client');
 const chai = require('chai');
 let socket;
 
-
-
-describe('Try on first socket test', function () {
+describe('Socket test suit', function () {
   beforeEach(function (done) {
     socket1 = io('http://localhost:3000', {
       forceNew: true
@@ -26,23 +24,22 @@ describe('Try on first socket test', function () {
       })
     })
   
-    socket1.on('disconnect', function () {
-      console.log('socket1 disconnected...');
-    })
+    // socket1.on('disconnect', function () {
+    //   console.log('socket1 disconnected...');
+    // })
 
-    socket2.on('disconnect', function () {
-      console.log('socket2 disconnected...');
-    })
+    // socket2.on('disconnect', function () {
+    //   console.log('socket2 disconnected...');
+    // })
 
-    socket3.on('disconnect', function () {
-      console.log('socket3 disconnected...');
-    })
+    // socket3.on('disconnect', function () {
+    //   console.log('socket3 disconnected...');
+    // })
   });
   
   afterEach(function (done) {
     // Cleanup
     if (socket1.connected) {
-      console.log('disconnecting...');
       socket1.disconnect();
     } else {
       // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
@@ -50,7 +47,6 @@ describe('Try on first socket test', function () {
     }
 
     if (socket2.connected) {
-      console.log('disconnecting...');
       socket2.disconnect();
     } else {
       // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
@@ -58,7 +54,6 @@ describe('Try on first socket test', function () {
     }
 
     if (socket3.connected) {
-      console.log('disconnecting...');
       socket3.disconnect();
     } else {
       // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
@@ -66,24 +61,34 @@ describe('Try on first socket test', function () {
     }
     done();
   });
-  test('same room cannot joined by m', function (done) {
 
-    console.log(`socket1`, socket1.id);
-    console.log(`socket2`, socket2.id);
-    console.log(`socket3`, socket3.id);
-    
-
+  test('one user joined a room, callback parameter should be true', function (done) {
     socket1.emit(`join-room`, 'room-1',function(value){
-      console.log(value);
-      socket2.emit(`join-room`, 'room-1',function(value){
-        console.log(value);
-        socket3.emit(`join-room`, 'room-2',function(value){
-          console.log(value);
+      expect(value).toEqual(true);
+      done();
+    });
+  });
+
+  test("two user joined a room, second user's callback parameter should be true", function (done) {
+    socket1.emit(`join-room`, 'room-1',function(value1){
+      expect(value1).toEqual(true);
+      socket2.emit(`join-room`, 'room-1',function(value2){
+        expect(value2).toEqual(true);
+        done()
+      });
+    });
+  });
+
+  test("three user joined a room, third socket's callback parameter should be false", function (done) {
+    socket1.emit(`join-room`, 'room-1',function(value1){
+      expect(value1).toEqual(true);
+      socket2.emit(`join-room`, 'room-1',function(value2){
+        expect(value2).toEqual(true);
+        socket3.emit(`join-room`, 'room-1',function(value3){
+          expect(value3).toEqual(false);
           done();
         });
       });
-      // done();
     });
-    
   })
 });

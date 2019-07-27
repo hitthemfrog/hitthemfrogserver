@@ -14,12 +14,10 @@ io.on('connection', function(socket){
   socket.on('join-room', function(roomName, cb){
     if (!io.nsps['/'].adapter.rooms[roomName]) {
       socket.join(roomName);
-      // console.log(io.nsps['/'].adapter);
       console.log(`masuk ${roomName}`);
       cb(true)
     } else if (io.nsps['/'].adapter.rooms[roomName]['length'] < 2) {
       socket.join(roomName);
-      // console.log(io.nsps['/'].adapter);
       console.log(`masuk ${roomName}`);
       cb(true)
     } else {
