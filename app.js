@@ -4,34 +4,13 @@ const port = 3000;
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-const avail_room = [
-  {
-    name: 'Room A',
-    players: [
-      {
-        playerName: 'player One',
-        score: 0
-      },
-      {
-        playerName: 'player two',
-        score: 0
-      }
-    ]
-  },
-  {
-    name: 'Room B',
-    players: [
-      {
-        playerName: 'thanos',
-        score: 0
-      },
-      {
-        playerName: 'avenger',
-        score: 0
-      }
-    ]
+const players = {
+  'abc': {
+
   }
-]
+}
+
+const avail_room = []
 
 app.get('/', (req, res, next) => {
   res.status(200).json('HELLO HIT THEM FROG');
@@ -46,15 +25,31 @@ io.on('connection', function(socket){
   //   // io.emit('checkRooms', avail_room)
   // })
 
-  socket.on('createRooms', function() {
+  socket.on('createRooms', function(data) {
     console.log('createRooms ke trigger')
-    let roomsObject = io.sockets.adapter.rooms
-    let roomsKey = Object.keys(roomsObject)
-    let roomList = roomsKey.map(e => roomsObject[e])
-    io.emit('createRooms', roomList)
+    // let roomsObject = io.sockets.adapter.rooms
+    // let roomsKey = Object.keys(roomsObject)
+    // let roomList = roomsKey.map(e => roomsObject[e])
+    // io.emit('createRooms', roomList)
+    console.log(data)
+    avail_room.push({
+      name: data.roomName,
+      players: [
+        {
+          playerName: data.player,
+          score: 0
+        }
+      ]
+    },)
+    io.emit('createRooms', avail_room)
   })
 
   socket.on('join-room', function(roomName, cb){
+    // console.log('join room ketrigger', roomName, player, cb)
+    // if (players[player]) {
+      
+    // }
+    // players[player] = 0
     if (!io.nsps['/'].adapter.rooms[roomName]) {
       socket.join(roomName);
       // console.log(io.nsps['/'].adapter);
