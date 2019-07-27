@@ -24,23 +24,22 @@ describe('Socket test suit', function () {
       })
     })
   
-    socket1.on('disconnect', function () {
-      console.log('socket1 disconnected...');
-    })
+    // socket1.on('disconnect', function () {
+    //   console.log('socket1 disconnected...');
+    // })
 
-    socket2.on('disconnect', function () {
-      console.log('socket2 disconnected...');
-    })
+    // socket2.on('disconnect', function () {
+    //   console.log('socket2 disconnected...');
+    // })
 
-    socket3.on('disconnect', function () {
-      console.log('socket3 disconnected...');
-    })
+    // socket3.on('disconnect', function () {
+    //   console.log('socket3 disconnected...');
+    // })
   });
   
   afterEach(function (done) {
     // Cleanup
     if (socket1.connected) {
-      console.log('disconnecting...');
       socket1.disconnect();
     } else {
       // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
@@ -48,7 +47,6 @@ describe('Socket test suit', function () {
     }
 
     if (socket2.connected) {
-      console.log('disconnecting...');
       socket2.disconnect();
     } else {
       // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
@@ -56,7 +54,6 @@ describe('Socket test suit', function () {
     }
 
     if (socket3.connected) {
-      console.log('disconnecting...');
       socket3.disconnect();
     } else {
       // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
@@ -65,18 +62,30 @@ describe('Socket test suit', function () {
     done();
   });
 
-  test('one user joined a room, callback param should be true', function (done) {
+  test('one user joined a room, callback parameter should be true', function (done) {
     socket1.emit(`join-room`, 'room-1',function(value){
       expect(value).toEqual(true);
       done();
     });
   });
 
-  test("three user joined a room, third socket's callback param should be false", function (done) {
-    socket1.emit(`join-room`, 'room-1',function(value){
-      socket2.emit(`join-room`, 'room-1',function(value){
-        socket3.emit(`join-room`, 'room-1',function(value){
-          expect(value).toEqual(false);
+  test("two user joined a room, second user's callback parameter should be true", function (done) {
+    socket1.emit(`join-room`, 'room-1',function(value1){
+      expect(value1).toEqual(true);
+      socket2.emit(`join-room`, 'room-1',function(value2){
+        expect(value2).toEqual(true);
+        done()
+      });
+    });
+  });
+
+  test("three user joined a room, third socket's callback parameter should be false", function (done) {
+    socket1.emit(`join-room`, 'room-1',function(value1){
+      expect(value1).toEqual(true);
+      socket2.emit(`join-room`, 'room-1',function(value2){
+        expect(value2).toEqual(true);
+        socket3.emit(`join-room`, 'room-1',function(value3){
+          expect(value3).toEqual(false);
           done();
         });
       });
