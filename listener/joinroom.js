@@ -5,7 +5,7 @@ const { isPlayerInRoom } = require('../helpers')
 const { createRooms, createPlayer } = require('../types')
 
 module.exports = ({
-  socket, socketRooms, room
+  socket, socketRooms, appRoom
 }) => {
   
   return (data, cb) => {
@@ -15,14 +15,14 @@ module.exports = ({
     let selectedRoom = socketRooms[roomName]
     if (!selectedRoom) {
       socket.join(roomName)
-      room[roomName] = createRooms(roomName, playerName)
+      appRoom[roomName] = createRooms(roomName, playerName)
       cb(true)
-    } else if (selectedRoom && selectedRoom.length < 2 && !isPlayerInRoom(room[roomName], playerName)) {
-      room[roomName].players.push(createPlayer(playerName))
+    } else if (selectedRoom && selectedRoom.length < 2 && !isPlayerInRoom(appRoom[roomName], playerName)) {
+      appRoom[roomName].players.push(createPlayer(playerName))
       cb(true)
     } else {
       cb(false)
     }
-    socket.emit('listRoom', room)
+    socket.emit('listRoom', appRoom)
   }
 }

@@ -8,14 +8,9 @@ const io = require('socket.io')(http)
 const joinRoom = require('./listener/joinroom')
 
 /**
- * {
- *   name: nama room
- *   players: []
- *   statusGame: 
- * }
+ * types: createRooms() dari types.js
  */
-const room = {}
-
+const appRoom = {}
 
 io.on('connection', function (socket) {
   console.log('a user connected');
@@ -47,7 +42,7 @@ io.on('connection', function (socket) {
     io.emit('createRooms', avail_room)
   })
 
-  socket.on('joinRoom', joinRoom({ socket, socketRooms, room }))
+  socket.on('joinRoom', joinRoom({ socket, socketRooms, appRoom }))
 
   socket.on('checkPlayer', function () {
     let roomsKeys = Object.keys(nsp.adapter.rooms);
