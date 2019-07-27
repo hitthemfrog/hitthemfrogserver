@@ -4,6 +4,35 @@ const port = 3000;
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
+const avail_room = [
+  {
+    name: 'Room A',
+    players: [
+      {
+        playerName: 'player One',
+        score: 0
+      },
+      {
+        playerName: 'player two',
+        score: 0
+      }
+    ]
+  },
+  {
+    name: 'Room B',
+    players: [
+      {
+        playerName: 'thanos',
+        score: 0
+      },
+      {
+        playerName: 'avenger',
+        score: 0
+      }
+    ]
+  }
+]
+
 app.get('/', (req, res, next) => {
   res.status(200).json('HELLO HIT THEM FROG');
 })
@@ -28,7 +57,14 @@ io.on('connection', function(socket){
     }
   })
 
+  socket.on('checkRooms', function() {
+    console.log('checkRooms ke trigger')
+    // io.emit('checkRooms', io.sockets.adapter.rooms)
+    io.emit('checkRooms', avail_room)
+  })
+
   socket.on('checkPlayer', function() {
+    console.log('checkPlayer ketrigger')
     let roomsKeys = Object.keys(io.nsps['/'].adapter.rooms);
     let roomName = roomsKeys[roomsKeys.length-1];
     let playerAmount = io.nsps['/'].adapter.rooms[roomName]['length'];
