@@ -12,17 +12,20 @@ io.on('connection', function(socket){
   console.log('a user connected');
   
   socket.on('join-room', function(roomName, cb){
-    if (!io.nsps['/'].adapter.rooms['roomName']) {
+    if (!io.nsps['/'].adapter.rooms[roomName]) {
       socket.join(roomName);
+      // console.log(io.nsps['/'].adapter);
       console.log(`masuk ${roomName}`);
       cb(true)
     } else if (io.nsps['/'].adapter.rooms[roomName]['length'] < 2) {
       socket.join(roomName);
+      // console.log(io.nsps['/'].adapter);
       console.log(`masuk ${roomName}`);
       cb(true)
     } else {
       cb(false)
     }
+    
   })
 
   socket.on('checkPlayer', function() {
@@ -32,7 +35,7 @@ io.on('connection', function(socket){
     io.emit('checkPlayer', playerAmount);
   });
 
-  socket.on('checkBeforeEnter', function(value){
+  socket.on('checkBeforeEnter', function(value){done();
     if (io.nsps['/'].adapter.rooms[value] == undefined) {
       // console.log(`${value} ADUH undefineed`);
       io.emit(`checkBeforeEnter-${value}`, 0);
