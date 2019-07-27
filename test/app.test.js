@@ -2,9 +2,7 @@ const io = require('socket.io-client');
 const chai = require('chai');
 let socket;
 
-
-
-describe('Try on first socket test', function () {
+describe('Socket test suit', function () {
   beforeEach(function (done) {
     socket1 = io('http://localhost:3000', {
       forceNew: true
@@ -66,24 +64,22 @@ describe('Try on first socket test', function () {
     }
     done();
   });
-  test('same room cannot joined by m', function (done) {
 
-    console.log(`socket1`, socket1.id);
-    console.log(`socket2`, socket2.id);
-    console.log(`socket3`, socket3.id);
-    
-
+  test('one user joined a room, callback param should be true', function (done) {
     socket1.emit(`join-room`, 'room-1',function(value){
-      console.log(value);
+      expect(value).toEqual(true);
+      done();
+    });
+  });
+
+  test("three user joined a room, third socket's callback param should be false", function (done) {
+    socket1.emit(`join-room`, 'room-1',function(value){
       socket2.emit(`join-room`, 'room-1',function(value){
-        console.log(value);
-        socket3.emit(`join-room`, 'room-2',function(value){
-          console.log(value);
+        socket3.emit(`join-room`, 'room-1',function(value){
+          expect(value).toEqual(false);
           done();
         });
       });
-      // done();
     });
-    
   })
 });
