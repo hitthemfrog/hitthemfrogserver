@@ -41,12 +41,9 @@ io.on('connection', function(socket){
   console.log('a user connected');
   
   socket.on('join-room', function(roomName, cb){
-    console.log('ini dari server', roomName);
-    
     if (!io.nsps['/'].adapter.rooms['roomName']) {
-      socket.join(roomName);-
-      // console.log('dari server',io.nsps['/'].adapter);
-      console.log('masuk room 1');
+      socket.join(roomName);
+      console.log(`masuk ${roomName}`);
       cb(true)
     } else if (io.nsps['/'].adapter.rooms[roomName]['length'] < 2) {
       socket.join(roomName);
