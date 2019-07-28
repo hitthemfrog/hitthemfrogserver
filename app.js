@@ -21,6 +21,12 @@ io.on('connection', function (socket) {
 
   socket.on('joinRoom', joinRoom({ io, socket, socketRooms, appRoom }))
   socket.on('setPlayerScore', setPlayerScore({ io, appRoom}))
+  socket.on('checkRoom', () => {
+    console.log('emitted')
+    let roomKeys = Object.keys(appRoom)
+    let rooms = roomKeys.map(e => appRoom[e])
+    io.emit('listRoom', rooms)
+  })
 
   socket.on('disconnect', function () {
     console.log('a user disconnected')
