@@ -1,6 +1,12 @@
 const io = require('socket.io-client');
-const chai = require('chai');
-let socket;
+const { http } = require('../app')
+
+afterAll((done) => {
+  http.close(() => {
+    console.log('exit server')
+    done()
+  })
+})
 
 describe('Socket test suit for Room', function () {
   beforeEach(function (done) {
@@ -79,7 +85,7 @@ describe('Socket test suit for Room', function () {
     });
   });
 
-  test("three user joined a room, third socket's callback parameter should be false", function (done) {
+  test.only("three user joined a room, third socket's callback parameter should be false", function (done) {
     socket1.emit(`join-room`, 'room-1',function(value1){
       expect(value1).toEqual(true);
       socket2.emit(`join-room`, 'room-1',function(value2){
