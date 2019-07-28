@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "coverage": "npm test -- --coverage --watchAll=false --detectOpenHandles"
+    "coverage": "npm test -- --coverage --runInBand --watchAll --detectOpenHandles"
   },
   "repository": {
     "type": "git",

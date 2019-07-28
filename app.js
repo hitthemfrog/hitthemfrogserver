@@ -33,7 +33,7 @@ io.on('connection', function(socket){
     io.emit('checkPlayer', playerAmount);
   });
 
-  socket.on('checkBeforeEnter', function(value){done();
+  socket.on('checkBeforeEnter', function(value){
     if (io.nsps['/'].adapter.rooms[value] == undefined) {
       // console.log(`${value} ADUH undefineed`);
       io.emit(`checkBeforeEnter-${value}`, 0);

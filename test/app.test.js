@@ -68,24 +68,30 @@ describe('Socket test suit for Room', function () {
     done();
   });
 
-  test('one user joined a room, callback parameter should be true', function (done) {
-    socket1.emit(`join-room`, 'room-1',function(value){
-      expect(value).toEqual(true);
-      done();
-    });
-  });
-
-  test("two user joined a room, second user's callback parameter should be true", function (done) {
-    socket1.emit(`join-room`, 'room-1',function(value1){
-      expect(value1).toEqual(true);
-      socket2.emit(`join-room`, 'room-1',function(value2){
-        expect(value2).toEqual(true);
-        done()
+  test('one user joined a room, callback parameter should be true', () => {
+    return new Promise((resolve, reject) => {
+      socket1.emit(`join-room`, 'room-1', (value) => {
+        expect(value).toEqual(true);
+        resolve()
       });
-    });
+    })
   });
 
-  test.only("three user joined a room, third socket's callback parameter should be false", function (done) {
+  // test("two user joined a room, second user's callback parameter should be true", () => {
+  //   return new Promise((resolve, reject) => {
+  //     socket1.emit(`join-room`, 'room-1', (value1) => {
+  //       expect(value1).toEqual(true);
+  //       socket2.emit(`join-room`, 'room-1', (value2) => {
+  //         console.log('masukkkkkkkkkkkkkk')
+  //         expect(value2).toEqual(true);
+  //         console.log('pppppppppppppppppppppp')
+  //         resolve()
+  //       });
+  //     });
+  //   })
+  // });
+
+  test("three user joined a room, third socket's callback parameter should be false", function (done) {
     socket1.emit(`join-room`, 'room-1',function(value1){
       expect(value1).toEqual(true);
       socket2.emit(`join-room`, 'room-1',function(value2){
