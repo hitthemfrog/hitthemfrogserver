@@ -73,6 +73,20 @@ io.on('connection', function (socket) {
     io.emit('setCounter');
   })
 
+  socket.on('setPlayerScore', playerDataObj => {
+    if (appRoom[playerDataObj.room]) {
+      let index = appRoom[playerDataObj.room].players.findIndex(p => p.name === playerDataObj.player)
+
+      appRoom[playerDataObj.room].players[index].hitScores = playerDataObj.hit
+      appRoom[playerDataObj.room].players[index].missScores = playerDataObj.miss
+
+      io.to(playerDataObj.room).emit('playersData', appRoom[playerDataObj.room].players)
+    }
+    
+    // console.log(appRoom[playerDataObj.room].players)
+  })
+
+
   socket.on('disconnect', function () {
     console.log('a user disconnected')
   })
