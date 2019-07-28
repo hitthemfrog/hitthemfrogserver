@@ -6,6 +6,11 @@ module.exports  = ({
   io, appRoom
 }) => {
   return playerDataObj => {
+
+    if (!appRoom[playerDataObj.room]) {
+      return
+    }
+    
     let index = appRoom[playerDataObj.room].players.findIndex(p => p.name === playerDataObj.player)
     let room = appRoom[playerDataObj.room]
     let player1 = room.players[0]
