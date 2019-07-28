@@ -1,65 +1,39 @@
-const express = require('express');
-const app = express();
-const port = 3000;
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const express = require('express')
+const app = express()
+const port = 3000
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
+const joinRoom = require('./listener/joinroom')
+const setPlayerScore = require('./listener/setplayerscore')
 
-app.get('/', (req, res, next) => {
-  res.status(200).json('HELLO HIT THEM FROG');
-})
+/**
+ * types: createRooms() dari types.js
+ */
 
-io.on('connection', function(socket){
+
+const appRoom = {}
+  
+
+io.on('connection', function (socket) {
   console.log('a user connected');
-  
-  socket.on('join-room', function(roomName, cb){
-    if (!io.nsps['/'].adapter.rooms[roomName]) {
-      socket.join(roomName);
-      console.log(`masuk ${roomName}`);
-      cb(true)
-    } else if (io.nsps['/'].adapter.rooms[roomName]['length'] < 2) {
-      socket.join(roomName);
-      console.log(`masuk ${roomName}`);
-      cb(true)
-    } else {
-      cb(false)
-    }
-    
+  const nsp = io.of('/')
+  const socketRooms = nsp.adapter.rooms
+
+  socket.on('joinRoom', joinRoom({ io, socket, socketRooms, appRoom }))
+  socket.on('setPlayerScore', setPlayerScore({ io, appRoom}))
+  socket.on('checkRoom', () => {
+    console.log('emitted')
+    let roomKeys = Object.keys(appRoom)
+    let rooms = roomKeys.map(e => appRoom[e])
+    io.emit('listRoom', rooms)
   })
 
-  socket.on('checkPlayer', function() {
-    let roomsKeys = Object.keys(io.nsps['/'].adapter.rooms);
-    let roomName = roomsKeys[roomsKeys.length-1];
-    let playerAmount = io.nsps['/'].adapter.rooms[roomName]['length'];
-    io.emit('checkPlayer', playerAmount);
-  });
-
-  socket.on('checkBeforeEnter', function(value){done();
-    if (io.nsps['/'].adapter.rooms[value] == undefined) {
-      // console.log(`${value} ADUH undefineed`);
-      io.emit(`checkBeforeEnter-${value}`, 0);
-    } else {
-      // console.log(`${value} dia ENGGA undefineed`);
-      let playerAmount = io.nsps['/'].adapter.rooms[value]['length'];
-      io.emit(`checkBeforeEnter-${value}`, playerAmount);
-    }
-  })
-
-  socket.on('increment', function(value){
-    let roomsKeys = Object.keys(io.nsps['/'].adapter.rooms);
-    let roomName = roomsKeys[roomsKeys.length-1];
-    io.to(roomName).emit('increment', value);
-  })
-  
-  socket.on('setCounter', function() {
-    io.emit('setCounter');
-  })
-
-  socket.on('disconnect', function() {
+  socket.on('disconnect', function () {
     console.log('a user disconnected')
   })
 
 });
 
-http.listen(port, function(){
+http.listen(port, function () {
   console.log('listening to port', port);
 });
