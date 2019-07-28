@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "dev": "nodemon app.js",
+    "start": "node app.js",
     "coverage": "npm test -- --coverage --watchAll=false"
   },
   "repository": {
