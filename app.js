@@ -10,13 +10,26 @@ const joinRoom = require('./listener/joinroom')
 /**
  * types: createRooms() dari types.js
  */
+
+
 const appRoom = {}
+  
+//Dummy Initialization
+const dummyRoom1 = createRooms('Room Duel 1', 'P1') 
+appRoom['Room Duel 1'] = dummyRoom1
+
+const p2 = createPlayer('P2')
+appRoom['Room Duel 1'].players.push(p2)
+
+// console.log(appRoom)
+// console.log(appRoom['Room Duel 1'].players)
 
 io.on('connection', function (socket) {
   console.log('a user connected');
   const nsp = io.of('/')
   const socketRooms = nsp.adapter.rooms
 
+  socket.join('Room Duel 1')  // Dummy Room
   // socket.on('checkRooms', function() {
   //   console.log('checkRooms ke trigger')
   //   io.emit('checkRooms', io.sockets.adapter.rooms)
@@ -71,6 +84,16 @@ io.on('connection', function (socket) {
 
   socket.on('setCounter', function () {
     io.emit('setCounter');
+  })
+
+  socket.on('setPlayerScore', playerDataObj => {
+    let index = appRoom[playerDataObj.room].players.findIndex(p => p.name === playerDataObj.player)
+
+    appRoom[playerDataObj.room].players[index].hitScores = playerDataObj.hit
+    appRoom[playerDataObj.room].players[index].missScores = playerDataObj.miss
+
+    io.to(playerDataObj.room).emit('playersData', appRoom[playerDataObj.room].players)
+    console.log(appRoom[playerDataObj.room].players)
   })
 
   socket.on('disconnect', function () {

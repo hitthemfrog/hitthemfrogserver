@@ -11,7 +11,8 @@ const GAME_STATUS = {
 function createPlayer(name) {
   return {
     name,
-    score: 0
+    hitScores: 0,
+    missScores: 0
   }
 }
 
