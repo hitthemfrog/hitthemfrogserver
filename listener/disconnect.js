@@ -1,7 +1,7 @@
 const emitListRoom = require('../emitter/listroom')
 
 module.exports = ({
-  activePlayer, appRoom, io
+  activePlayer, appRoom, io, socket
 }) => {
   return () => {
     if (activePlayer[socket.id]) {
