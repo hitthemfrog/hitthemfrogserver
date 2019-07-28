@@ -1,3 +1,5 @@
+const emitListRoom = require('../emitter/listroom')
+
 // template listener
 // export sebuah function
 // kemudian return sebuah function yang menerima param data & callback
@@ -11,20 +13,18 @@ const {
 
 module.exports = ({
   activePlayer,
-  io,
   socket,
   socketRooms,
   appRoom
 }) => {
-
   return (data, cb) => {
     let {
       roomName,
       playerName
     } = data
 
-    // console.log({ roomName, playerName, cb })
     let selectedRoom = socketRooms[roomName]
+    
     if (!selectedRoom) {
       socket.join(roomName)
       appRoom[roomName] = createRooms(roomName, playerName)
@@ -32,10 +32,8 @@ module.exports = ({
         playerName,
         roomName
       }
-
-      console.log('di dalam join room, player name', activePlayer[socket.id].playerName);
-      // console.log('ini activePlayer'. activePlayer);
       cb(true)
+      emitListRoom(io, appRoom)
     } else if (selectedRoom && selectedRoom.length < 2 && !isPlayerInRoom(appRoom[roomName], playerName)) {
       socket.join(roomName)
       appRoom[roomName].players.push(createPlayer(playerName))
@@ -43,18 +41,10 @@ module.exports = ({
         playerName,
         roomName
       }
-      // console.log('ini activePlayer');
-
-      console.log('di dalam join room, player name', activePlayer[socket.id].playerName);
+      emitListRoom(io, appRoom)
       cb(true)
     } else {
       cb(false)
     }
-
-    // console.log('ini activePlayer', activePlayer);
-
-    let roomKeys = Object.keys(appRoom)
-    let rooms = roomKeys.map(e => appRoom[e])
-    io.emit('listRoom', rooms)
   }
 }
