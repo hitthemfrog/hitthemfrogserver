@@ -19,7 +19,7 @@ io.on('connection', function (socket) {
   const nsp = io.of('/')
   const socketRooms = nsp.adapter.rooms
 
-  socket.on('joinRoom', joinRoom({ socket, socketRooms, appRoom }))
+  socket.on('joinRoom', joinRoom({ io, socket, socketRooms, appRoom }))
   socket.on('setPlayerScore', setPlayerScore({ io, appRoom}))
 
   socket.on('disconnect', function () {

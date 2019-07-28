@@ -5,7 +5,7 @@ const { isPlayerInRoom } = require('../helpers')
 const { createRooms, createPlayer } = require('../types')
 
 module.exports = ({
-  socket, socketRooms, appRoom
+  io, socket, socketRooms, appRoom
 }) => {
   
   return (data, cb) => {
@@ -23,6 +23,8 @@ module.exports = ({
     } else {
       cb(false)
     }
-    socket.emit('listRoom', appRoom)
+    let roomKeys = Object.keys(appRoom)
+    let rooms = roomKeys.map(e => appRoom[e])
+    io.emit('listRoom', rooms)
   }
 }
