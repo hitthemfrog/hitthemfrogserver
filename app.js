@@ -30,7 +30,7 @@ io.on('connection', function (socket) {
   socket.on('joinRoom', joinRoom(socketListenerData))
   socket.on('setPlayerScore', setPlayerScore(socketListenerData))
   socket.on('disconnect', disconnect(socketListenerData))
-  socket.on('checkRoom', () => emitListRoom(socket, appRoom))
+  socket.on('checkRoom', () => emitListRoom(io, appRoom))
 
 });
 

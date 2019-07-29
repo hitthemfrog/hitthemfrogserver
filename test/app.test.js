@@ -400,4 +400,21 @@ describe('Socket test suit for Room', function () {
     })
   });
 
+  test('listRoom test', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('listRoom', (rooms) => {
+        try {
+          // expect(rooms[0].name).toEqual('room6')
+          console.log(rooms);
+        } catch (err) {
+          reject(err)
+        }
+        resolve()
+      })
+  
+      socket1.emit(`checkRoom`);
+  
+    });
+  });
 });
+
