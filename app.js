@@ -1,69 +1,45 @@
-const express = require('express');
-const app = express();
-const port = 3000;
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const express = require('express')
+const app = express()
+const port = 3333
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
+const joinRoom = require('./listener/joinroom')
+const setPlayerScore = require('./listener/setplayerscore')
+const disconnect = require('./listener/disconnect')
+const emitListRoom = require('./emitter/listroom')
 
-app.get('/', (req, res, next) => {
-  res.status(200).json('HELLO HIT THEM FROG');
-})
+/**
+ * types: createRooms() dari types.js
+ */
+const appRoom = {}
+const activePlayer = {}
 
-io.on('connection', function(socket){
+
+io.on('connection', function (socket) {
   console.log('a user connected');
-  
-  socket.on('join-room', function(roomName, cb){
-    if (!io.nsps['/'].adapter.rooms[roomName]) {
-      socket.join(roomName);
-      // console.log(`masuk ${roomName}`);
-      cb(true)
-    } else if (io.nsps['/'].adapter.rooms[roomName]['length'] < 2) {
-      socket.join(roomName);
-      // console.log(`masuk ${roomName}`);
-      cb(true)
-    } else {
-      cb(false)
-    }
-    
-  })
+  const nsp = io.of('/')
+  const socketRooms = nsp.adapter.rooms
+  const socketListenerData = {
+    activePlayer,
+    io,
+    socket,
+    socketRooms,
+    appRoom
+  }
 
-  socket.on('checkPlayer', function() {
-    let roomsKeys = Object.keys(io.nsps['/'].adapter.rooms);
-    let roomName = roomsKeys[roomsKeys.length-1];
-    let playerAmount = io.nsps['/'].adapter.rooms[roomName]['length'];
-    io.emit('checkPlayer', playerAmount);
-  });
-
-  socket.on('checkBeforeEnter', function(value){
-    if (io.nsps['/'].adapter.rooms[value] == undefined) {
-      // console.log(`${value} ADUH undefineed`);
-      io.emit(`checkBeforeEnter-${value}`, 0);
-    } else {
-      // console.log(`${value} dia ENGGA undefineed`);
-      let playerAmount = io.nsps['/'].adapter.rooms[value]['length'];
-      io.emit(`checkBeforeEnter-${value}`, playerAmount);
-    }
-  })
-
-  socket.on('increment', function(value){
-    let roomsKeys = Object.keys(io.nsps['/'].adapter.rooms);
-    let roomName = roomsKeys[roomsKeys.length-1];
-    io.to(roomName).emit('increment', value);
-  })
-  
-  socket.on('setCounter', function() {
-    io.emit('setCounter');
-  })
-
-  socket.on('disconnect', function() {
-    console.log('a user disconnected')
-  })
+  socket.on('joinRoom', joinRoom(socketListenerData))
+  socket.on('setPlayerScore', setPlayerScore(socketListenerData))
+  socket.on('disconnect', disconnect(socketListenerData))
+  socket.on('checkRoom', () => emitListRoom(socket, appRoom))
 
 });
 
-http.listen(port, function(){
+http.listen(port, function () {
   console.log('listening to port', port);
 });
 
 module.exports = {
-  http
+  http,
+  appRoom,
+  activePlayer 
 }
