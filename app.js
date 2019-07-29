@@ -23,19 +23,7 @@ const multerConf = {
       const ext = file.mimetype.split('/')[1]
       next(null, `${socketId}-${roomName}.${ext}`);
   }
-}),
-fileFilter: function(req, file, next){
-    if (!file){
-        next();
-    }
-    const image = file.mimetype.startsWith('image/');
-    if (image){
-        next(null, true)
-    }
-    else{
-        next({message:"File type not supported"}, false)
-    }
-}
+})
 }
 
 const avail_room = []
@@ -46,7 +34,7 @@ const avail_room = []
 // io.on('connection', function(socket){
 const express = require('express')
 const app = express()
-const port = 3000
+const port = 3232
 const { GAME_STATUS, createPlayer, createRooms } = require('./types')
 const { isPlayerInRoom } = require('./helpers')
 const http = require('http').createServer(app)
@@ -72,6 +60,10 @@ app.post("/uploadimage", Multer(multerConf).single('image'), (req, res, next) =>
 
   console.log(req.file, " ini req.file")
 });
+
+app.use((err, req, res, next) => {
+  console.error(err)
+})
 
 io.on('connection', function (socket) {
   console.log('a user connected');
