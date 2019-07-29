@@ -16,9 +16,10 @@ module.exports  = ({
     let player1 = room.players[0]
     let player2 = room.players[1]
 
-    room.players[index].hitScores = playerDataObj.hit
-    room.players[index].missScores = playerDataObj.miss
+    room.players[index].hit = playerDataObj.hit
+    room.players[index].miss = playerDataObj.miss
   
+    // console.log('MASHOK SINI', room.players[index].missScores);
     if (player1.miss == '5') {
       winner = player2.name
       emitIsGameFinished(io, playerDataObj.room, winner, room.players)

@@ -1,5 +1,9 @@
 const io = require('socket.io-client');
-const { http, appRoom, activePlayer } = require('../app')
+const {
+  http,
+  appRoom,
+  activePlayer
+} = require('../app')
 let socket1;
 let socket2;
 let socket3;
@@ -24,7 +28,7 @@ describe('Socket test suit for Room', function () {
     socket3 = io('http://localhost:3333', {
       forceNew: true
     });
-  
+
     socket1.on('connect', function () {
       socket2.on('connect', function () {
         socket3.on('connect', function () {
@@ -32,7 +36,7 @@ describe('Socket test suit for Room', function () {
         })
       })
     })
-    
+
     // deleteAllRooms()
     // socket1.on('disconnect', function () {
     //   console.log('socket1 disconnected...');
@@ -46,9 +50,9 @@ describe('Socket test suit for Room', function () {
     //   console.log('socket3 disconnected...');
     // })
   });
-  
+
   afterEach(function (done) {
-    
+
 
     // Cleanup
     if (socket1.connected) {
@@ -76,22 +80,63 @@ describe('Socket test suit for Room', function () {
     done();
   });
 
-  test('one user joined a room, callback parameter should be true', () => {
+  test('set player score test, no winner', () => {
     return new Promise((resolve, reject) => {
-      socket1.on('listRoom', (rooms) => {
-        console.log('testing', rooms)
+      socket1.on('playerScores', (roomPlayers) => {
         try {
-          expect(rooms[0].name).toEqual('room1')
-        } catch(err) {
+          expect(roomPlayers[0].name).toEqual('Nobita');
+          expect(roomPlayers[1].name).toEqual('Dekisugi');
+        } catch (err) {
           reject(err)
         }
         resolve()
       })
 
-      socket1.emit(`joinRoom`, {roomName: 'room1', playerName: 'playerName'}, (value) => {
-        expect(value).toEqual(true);  
+      socket1.emit(`joinRoom`, {
+        roomName: 'room2',
+        playerName: 'Nobita'
+      }, (value1) => {
+        socket2.emit(`joinRoom`, {
+          roomName: 'room2',
+          playerName: 'Dekisugi'
+        }, (value2) => {
+          socket1.emit(`setPlayerScore`, {
+            player: 'Nobita',
+            room: 'room2',
+            hit: '1',
+            miss: '1'
+          });
+          socket1.emit(`setPlayerScore`, {
+            player: 'Dekisugi',
+            room: 'room2',
+            hit: '1',
+            miss: '1'
+          });
+        });
       })
-      
+
+    })
+
+  });
+
+  test('one user joined a room, callback parameter should be true', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('listRoom', (rooms) => {
+        try {
+          expect(rooms[0].name).toEqual('room1')
+        } catch (err) {
+          reject(err)
+        }
+        resolve()
+      })
+
+      socket1.emit(`joinRoom`, {
+        roomName: 'room1',
+        playerName: 'playerName'
+      }, (value) => {
+        expect(value).toEqual(true);
+      })
+
     })
   });
 
@@ -100,27 +145,80 @@ describe('Socket test suit for Room', function () {
       socket1.on('listRoom', (rooms) => {
         try {
           expect(rooms[0].name).toEqual('room1')
-        } catch(err) {
+        } catch (err) {
           reject(err)
         }
         socket2.on('listRoom', (rooms) => {
           try {
             expect(rooms[0].name).toEqual('room1')
-          } catch(err) {
+          } catch (err) {
             reject(err)
           }
           resolve()
         });
       });
 
-      socket1.emit(`joinRoom`, {roomName: 'room1', playerName: 'Nobita'}, (value) => {
-        expect(value).toEqual(true);  
+      socket1.emit(`joinRoom`, {
+        roomName: 'room1',
+        playerName: 'Nobita'
+      }, (value) => {
+        expect(value).toEqual(true);
       });
 
-      socket2.emit(`joinRoom`, {roomName: 'room1', playerName: 'Dekisugi'}, (value) => {
-        expect(value).toEqual(true);  
+      socket2.emit(`joinRoom`, {
+        roomName: 'room1',
+        playerName: 'Dekisugi'
+      }, (value) => {
+        expect(value).toEqual(true);
       });
-      
+    })
+  });
+
+  test('three user joined a room, third user callback parameter should be false', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('listRoom', (rooms) => {
+        try {
+          expect(rooms[0].name).toEqual('room1')
+        } catch (err) {
+          reject(err)
+        }
+        socket2.on('listRoom', (rooms) => {
+          try {
+            expect(rooms[0].name).toEqual('room1')
+          } catch (err) {
+            reject(err)
+          }
+          socket3.on('listRoom', (rooms) => {
+            try {
+              expect(rooms[0].name).toEqual('room1')
+            } catch (err) {
+              reject(err)
+            }
+            resolve()
+          });
+        });
+      });
+
+      socket1.emit(`joinRoom`, {
+        roomName: 'room1',
+        playerName: 'Nobita'
+      }, (value) => {
+        expect(value).toEqual(true);
+      });
+
+      socket2.emit(`joinRoom`, {
+        roomName: 'room1',
+        playerName: 'Dekisugi'
+      }, (value) => {
+        expect(value).toEqual(true);
+      });
+
+      socket2.emit(`joinRoom`, {
+        roomName: 'room1',
+        playerName: 'Dekisugi'
+      }, (value) => {
+        expect(value).toEqual(true);
+      });
     })
   });
 
