@@ -80,6 +80,45 @@ describe('Socket test suit for Room', function () {
     done();
   });
 
+  test('set player score test, player wrong room', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('playerScores', (roomPlayers) => {
+        try {
+          console.log('INI ROOM PLAYERS',roomPlayers);
+          
+          // expect(roomPlayers[0].name).toEqual('Nobita');
+          // expect(roomPlayers[1].name).toEqual('Dekisugi');
+        } catch (err) {
+          reject(err)
+        }
+        resolve()
+      })
+
+      socket1.emit(`joinRoom`, {
+        roomName: 'room5',
+        playerName: 'Nobita'
+      }, (value1) => {
+        socket2.emit(`joinRoom`, {
+          roomName: 'room5',
+          playerName: 'Dekisugi'
+        }, (value2) => {
+          socket1.emit(`setPlayerScore`, {
+            player: 'Nobita',
+            room: 'room20',
+            hit: '1',
+            miss: '1'
+          });
+          socket1.emit(`setPlayerScore`, {
+            player: 'Dekisugi',
+            room: 'room5',
+            hit: '1',
+            miss: '1'
+          });
+        });
+      })
+    })
+  });
+
   test('set player score test, no winner', () => {
     return new Promise((resolve, reject) => {
       socket1.on('playerScores', (roomPlayers) => {
@@ -114,9 +153,151 @@ describe('Socket test suit for Room', function () {
           });
         });
       })
-
     })
+  });
 
+  test('set player score test, player 1 miss 5 times, player 2 win', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('isGameFinished', (winnerObject) => {
+        try {
+          expect(winnerObject.winner).toEqual('Dekisugi');
+        } catch (err) {
+          reject(err)
+        }
+        resolve()
+      })
+
+      socket1.emit(`joinRoom`, {
+        roomName: 'room3',
+        playerName: 'Nobita'
+      }, (value1) => {
+        socket2.emit(`joinRoom`, {
+          roomName: 'room3',
+          playerName: 'Dekisugi'
+        }, (value2) => {
+          socket1.emit(`setPlayerScore`, {
+            player: 'Nobita',
+            room: 'room3',
+            hit: '1',
+            miss: '5'
+          });
+          socket1.emit(`setPlayerScore`, {
+            player: 'Dekisugi',
+            room: 'room3',
+            hit: '1',
+            miss: '1'
+          });
+        });
+      })
+    })
+  });
+
+  test('set player score test, player 2 miss 5 times, player 1 win', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('isGameFinished', (winnerObject) => {
+        try {
+          expect(winnerObject.winner).toEqual('Nobita');
+        } catch (err) {
+          reject(err)
+        }
+        resolve()
+      })
+
+      socket1.emit(`joinRoom`, {
+        roomName: 'room4',
+        playerName: 'Nobita'
+      }, (value1) => {
+        socket2.emit(`joinRoom`, {
+          roomName: 'room4',
+          playerName: 'Dekisugi'
+        }, (value2) => {
+          socket1.emit(`setPlayerScore`, {
+            player: 'Nobita',
+            room: 'room4',
+            hit: '1',
+            miss: '1'
+          });
+          socket1.emit(`setPlayerScore`, {
+            player: 'Dekisugi',
+            room: 'room4',
+            hit: '1',
+            miss: '5'
+          });
+        });
+      })
+    })
+  });
+
+  test('set player score test, player 1 hit 10 times, player 1 win', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('isGameFinished', (winnerObject) => {
+        try {
+          expect(winnerObject.winner).toEqual('Nobita');
+        } catch (err) {
+          reject(err)
+        }
+        resolve()
+      })
+
+      socket1.emit(`joinRoom`, {
+        roomName: 'room4',
+        playerName: 'Nobita'
+      }, (value1) => {
+        socket2.emit(`joinRoom`, {
+          roomName: 'room4',
+          playerName: 'Dekisugi'
+        }, (value2) => {
+          socket1.emit(`setPlayerScore`, {
+            player: 'Nobita',
+            room: 'room4',
+            hit: '10',
+            miss: '1'
+          });
+          socket1.emit(`setPlayerScore`, {
+            player: 'Dekisugi',
+            room: 'room4',
+            hit: '1',
+            miss: '1'
+          });
+        });
+      })
+    })
+  });
+
+  test('set player score test, player 2 hit 10 times, player 2 win', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('isGameFinished', (winnerObject) => {
+        try {
+          expect(winnerObject.winner).toEqual('Dekisugi');
+        } catch (err) {
+          reject(err)
+        }
+        resolve()
+      })
+
+      socket1.emit(`joinRoom`, {
+        roomName: 'room5',
+        playerName: 'Nobita'
+      }, (value1) => {
+        socket2.emit(`joinRoom`, {
+          roomName: 'room5',
+          playerName: 'Dekisugi'
+        }, (value2) => {
+          socket1.emit(`setPlayerScore`, {
+            player: 'Nobita',
+            room: 'room5',
+            hit: '1',
+            miss: '1'
+          });
+          socket1.emit(`setPlayerScore`, {
+            player: 'Dekisugi',
+            room: 'room5',
+            hit: '10',
+            miss: '1'
+          });
+        });
+      })
+    })
   });
 
   test('one user joined a room, callback parameter should be true', () => {
