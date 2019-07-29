@@ -17,11 +17,9 @@ module.exports  = ({
     let player2 = room.players[1]
     let activePlayer = room.players[index];
 
-    if (activePlayer) {
-      activePlayer.hit = playerDataObj.hit
-      activePlayer.miss = playerDataObj.miss
-    }
-  
+    activePlayer.hit = playerDataObj.hit
+    activePlayer.miss = playerDataObj.miss
+    
     if (player1 && player1.miss == '5') {
       winner = player2.name
       emitIsGameFinished(io, playerDataObj.room, winner, room.players)
