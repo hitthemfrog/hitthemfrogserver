@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
-const port = 3333
+const port = process.env.PORT || 80
 const http = require('http').createServer(app)
-const io = require('socket.io')(http)
+const io = require('socket.io').listen(http)
 const joinRoom = require('./listener/joinroom')
 const setPlayerScore = require('./listener/setplayerscore')
 const disconnect = require('./listener/disconnect')
