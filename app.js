@@ -1,14 +1,13 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3333
-const expresshttp = require('http')
 let http 
 
 if (process.env.NODE_ENV === 'production') {
   const httpscred = require('./https.cred')
-  http = expresshttp.createServer(httpscred, app)
+  http = require('https').createServer(httpscred, app)
 } else {
-  http = expresshttp.createServer(app)
+  http = require('http').expresshttp.createServer(app)
 }
 
 app.get('/', (req, res, next) => res.json('hello hit them frog'))
