@@ -15,7 +15,8 @@ module.exports = ({
   activePlayer,
   socket,
   socketRooms,
-  appRoom
+  appRoom,
+  io
 }) => {
   return (data, cb) => {
     let {
