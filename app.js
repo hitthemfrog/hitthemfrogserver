@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === 'production') {
   const httpscred = require('./https.cred')
   http = require('https').createServer(httpscred, app)
 } else {
-  http = require('http').expresshttp.createServer(app)
+  http = require('http').createServer(app)
 }
 
 app.get('/', (req, res, next) => res.json('hello hit them frog'))
