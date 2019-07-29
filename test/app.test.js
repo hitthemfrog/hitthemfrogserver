@@ -84,10 +84,7 @@ describe('Socket test suit for Room', function () {
     return new Promise((resolve, reject) => {
       socket1.on('playerScores', (roomPlayers) => {
         try {
-          console.log('INI ROOM PLAYERS',roomPlayers);
-          
-          // expect(roomPlayers[0].name).toEqual('Nobita');
-          // expect(roomPlayers[1].name).toEqual('Dekisugi');
+          expect(roomPlayers[0].hit).toEqual(0);
         } catch (err) {
           reject(err)
         }
@@ -304,7 +301,7 @@ describe('Socket test suit for Room', function () {
     return new Promise((resolve, reject) => {
       socket1.on('listRoom', (rooms) => {
         try {
-          expect(rooms[0].name).toEqual('room1')
+          expect(rooms[0].name).toEqual('room6')
         } catch (err) {
           reject(err)
         }
@@ -312,7 +309,7 @@ describe('Socket test suit for Room', function () {
       })
 
       socket1.emit(`joinRoom`, {
-        roomName: 'room1',
+        roomName: 'room6',
         playerName: 'playerName'
       }, (value) => {
         expect(value).toEqual(true);
