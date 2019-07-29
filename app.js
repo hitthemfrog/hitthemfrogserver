@@ -7,6 +7,27 @@ const joinRoom = require('./listener/joinroom')
 const setPlayerScore = require('./listener/setplayerscore')
 const disconnect = require('./listener/disconnect')
 const emitListRoom = require('./emitter/listroom')
+const Multer = require('multer');
+const multerConf = {
+  storage: Multer.diskStorage({
+    destination: function (req, file, next) {
+      next(null, './public')
+    },
+    filename: function (req, file, next) {
+      console.log(req)
+      let {
+        socketId,
+        roomName
+      } = req.body
+      const ext = file.mimetype.split('/')[1]
+      next(null, `${socketId}-${roomName}.${ext}`);
+    }
+  })
+}
+
+app.post("/uploadimage", Multer(multerConf).single('image'), (req, res, next) => {
+  console.log(req.file, " ini req.file")
+});
 
 /**
  * types: createRooms() dari types.js
@@ -41,5 +62,5 @@ http.listen(port, function () {
 module.exports = {
   http,
   appRoom,
-  activePlayer 
+  activePlayer
 }
