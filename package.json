@@ -1,0 +1,32 @@
+{
+  "name": "hitthemfrogserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "coverage": "npm test -- --coverage --runInBand --watchAll --detectOpenHandles",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hitthemfrog/hitthemfrogserver.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hitthemfrog/hitthemfrogserver/issues"
+  },
+  "homepage": "https://github.com/hitthemfrog/hitthemfrogserver#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "multer": "^1.4.2",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "jest": "^24.8.0"
+  }
+}
