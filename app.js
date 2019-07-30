@@ -63,6 +63,13 @@ io.on('connection', function (socket) {
   socket.on('disconnect', disconnect(socketListenerData))
   socket.on('checkRoom', () => emitListRoom(io, appRoom))
 
+  socket.on('leaveRoom', function(roomName) {
+    socket.leave(roomName, () => {
+      delete appRoom[roomName];
+      emitListRoom(io, appRoom);
+      console.log('INI SOCKET ROOMS',socketRooms[roomName]);
+    });
+  });
 });
 
 http.listen(port, function () {
