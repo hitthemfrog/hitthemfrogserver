@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3333
+const fs = require('fs')
+const cors = require('cors')
 let http 
 
 if (process.env.NODE_ENV === 'production') {
@@ -10,6 +12,7 @@ if (process.env.NODE_ENV === 'production') {
   http = require('http').createServer(app)
 }
 
+app.use(cors())
 app.get('/', (req, res, next) => res.json('hello hit them frog'))
 
 const io = require('socket.io').listen(http)
@@ -18,26 +21,47 @@ const setPlayerScore = require('./listener/setplayerscore')
 const disconnect = require('./listener/disconnect')
 const emitListRoom = require('./emitter/listroom')
 const Multer = require('multer');
-const multerConf = {
+const storeImage = {
   storage: Multer.diskStorage({
     destination: function (req, file, next) {
       next(null, './public')
     },
     filename: function (req, file, next) {
-      console.log(req)
       let {
-        socketId,
-        roomName
+        username,
       } = req.body
-      const ext = file.mimetype.split('/')[1]
-      next(null, `${socketId}-${roomName}.${ext}`);
+      next(null, `${username}.png`);
     }
   })
 }
 
-app.post("/uploadimage", Multer(multerConf).single('image'), (req, res, next) => {
-  console.log(req.file, " ini req.file")
-});
+const memoryStorage = {
+  storage: Multer.MemoryStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // Maximum file size is 10MB
+  },
+}
+
+app.post("/uploadimage", 
+  Multer(memoryStorage).single('image'),
+  (req, res, next) => {
+    let { username } = req.body
+    if (fs.existsSync('public/' + `${username}.png`)) {
+      next({message: 'username exists'})
+    } else {
+      fs.writeFileSync(`public/${username}.png`, req.file.buffer)
+      next()
+    }
+  },
+  (req, res, next) => {
+    res.json(true)
+  }
+);
+
+app.use((err, req, res, next) => {
+  console.error(err.message)
+  res.status(500).json(err.message)
+})
 
 /**
  * types: createRooms() dari types.js
@@ -67,7 +91,6 @@ io.on('connection', function (socket) {
     socket.leave(roomName, () => {
       delete appRoom[roomName];
       emitListRoom(io, appRoom);
-      console.log('INI SOCKET ROOMS',socketRooms[roomName]);
     });
   });
 });
