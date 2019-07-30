@@ -14,6 +14,7 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(cors())
 app.get('/', (req, res, next) => res.json('hello hit them frog'))
+app.use('/userimg', express.static('public'))
 
 const io = require('socket.io').listen(http)
 const joinRoom = require('./listener/joinroom')
