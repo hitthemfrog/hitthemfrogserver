@@ -16,11 +16,13 @@ function createPlayer(name) {
   }
 }
 
-function createRooms(name, firstPlayerName) {
+function createRooms(name, firstPlayerName, gameType, gameLevel) {
   return {
     name,
     players: [createPlayer(firstPlayerName)],
-    gameStatus: GAME_STATUS.CREATED
+    gameStatus: GAME_STATUS.CREATED,
+    gameType: gameType,
+    gameLevel: gameLevel
   }
 }
 
