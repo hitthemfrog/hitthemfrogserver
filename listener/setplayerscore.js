@@ -1,35 +1,43 @@
 
 const emitRoomPlayerScore = require('../emitter/room.playerscore')
 const emitIsGameFinished = require('../emitter/room.isgamefinished')
+const types = require('../types')
 
 module.exports  = ({
   io, appRoom
 }) => {
   return playerDataObj => {
+    let room = appRoom[playerDataObj.room]
+    if (!room) {
+      return
+    }
 
-    if (!appRoom[playerDataObj.room]) {
+    if (room.gameStatus === types.GAME_STATUS.STARTED && room.players.length === 1) {
+      emitIsGameFinished(io, playerDataObj.room, room.players[0].name, room.players)
       return
     }
     
-    let index = appRoom[playerDataObj.room].players.findIndex(p => p.name === playerDataObj.player)
-    let room = appRoom[playerDataObj.room]
+    let index = room.players.findIndex(p => p.name === playerDataObj.player)
     let player1 = room.players[0]
     let player2 = room.players[1]
+    let allPlayerActive = player1 && player2 
     let activePlayer = room.players[index];
 
-    activePlayer.hit = playerDataObj.hit
-    activePlayer.miss = playerDataObj.miss
+    if (activePlayer) {
+      activePlayer.hit = playerDataObj.hit
+      activePlayer.miss = playerDataObj.miss
+    }
     
-    if (player1 && player1.miss == '5') {
+    if (allPlayerActive && player1.miss == '5') {
       winner = player2.name
       emitIsGameFinished(io, playerDataObj.room, winner, room.players)
-    } else if (player2 && player2.miss == '5') {
+    } else if (allPlayerActive && player2.miss == '5') {
       winner = player1.name
       emitIsGameFinished(io, playerDataObj.room, winner, room.players)
-    } else if (player1 && player1.hit == '10') {
+    } else if (allPlayerActive && player1.hit == '10') {
       winner = player1.name
       emitIsGameFinished(io, playerDataObj.room, winner, room.players)
-    } else if (player2 && player2.hit == '10') {
+    } else if (allPlayerActive && player2.hit == '10') {
       winner = player2.name
       emitIsGameFinished(io, playerDataObj.room, winner, room.players)
     }
