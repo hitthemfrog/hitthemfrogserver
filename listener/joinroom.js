@@ -21,14 +21,16 @@ module.exports = ({
   return (data, cb) => {
     let {
       roomName,
-      playerName
+      playerName,
+      gameType,
+      gameLevel
     } = data
 
     let selectedRoom = socketRooms[roomName]
-    
+
     if (!selectedRoom) {
       socket.join(roomName)
-      appRoom[roomName] = createRooms(roomName, playerName)
+      appRoom[roomName] = createRooms(roomName, playerName, gameType, gameLevel)
       activePlayer[socket.id] = {
         playerName,
         roomName
