@@ -1,20 +1,19 @@
 const io = require('socket.io-client');
 const {
-  http,
-  appRoom,
-  activePlayer
+  http
 } = require('../app')
 let socket1;
 let socket2;
 let socket3;
 
 afterAll((done) => {
+  // fs.unlinkSync('public/test-image.png')
   http.close(() => {
     done()
   })
 })
 
-describe('Socket test suit for Room', function () {
+describe('Socket test suit', function () {
   beforeEach(function (done) {
     socket1 = io('http://localhost:3333', {
       forceNew: true
@@ -388,27 +387,72 @@ describe('Socket test suit for Room', function () {
   });
 
   test('listRoom test', () => {
-    
     return new Promise((resolve, reject) => {
-      socket1.on('listRoom', (rooms) => {
+      socket3.on('listRoom', (rooms) => {
         try {
-          console.log({rooms});
-          expect(rooms[0].name).toEqual('toto')
+          expect(rooms.length).toEqual(0)
           resolve()
         } catch (err) {
           reject(err)
         }
       })
-      appRoom['room6'] = {
-        name: 'room6'
-      }
-      socket1.emit(`joinRoom`, {playerName: 'joni', roomName: 'toto'}, function (val) {
-        if (val) {
-          socket1.emit(`checkRoom`);
-        }
-      })
+      socket1.emit(`checkRoom`);
   
     });
+  });
+
+  test('player ready test', (done) => {
+    let promiseRoomStarted = new Promise ((resolve, reject) => {
+      socket1.on('listRoom', (rooms) => {
+        let room = rooms[0]
+        if (room && room.gameStatus === 'STARTED') {
+          console.log('room started')
+          done()
+          resolve() 
+        }
+      })
+    })
+
+    socket1.emit(`joinRoom`, {
+      roomName: 'room1',
+      playerName: 'Nobita'
+    }, (value) => {
+      expect(value).toEqual(true);
+    });
+
+    socket1.emit(`joinRoom`, {
+      roomName: 'room1',
+      playerName: 'Dekisugi'
+    }, (value) => {
+      expect(value).toEqual(true);
+    });
+
+    socket1.emit('playerReady', ({playerName: 'Nobita', roomName: 'room1'}))
+    socket1.emit('playerReady', ({playerName: 'Dekisugi', roomName: 'room1'}))
+
+    return promiseRoomStarted
+  })
+
+  test('one user leave room', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('listRoom', (rooms) => {
+        try {
+          expect(rooms[0].name).toEqual('room1')
+        } catch (err) {
+          reject(err)
+        }
+        resolve()
+      })
+
+      socket1.emit(`joinRoom`, {
+        roomName: 'room1',
+        playerName: 'playerName'
+      }, (value) => {
+        expect(value).toEqual(true);
+        socket1.emit('leaveRoom', 'room1')
+      })
+
+    })
   });
 });
 

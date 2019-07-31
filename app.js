@@ -6,6 +6,7 @@ const cors = require('cors')
 const { GAME_STATUS } = require('./types')
 let http 
 
+/* istanbul ignore next */
 if (process.env.NODE_ENV === 'production') {
   const httpscred = require('./https.cred')
   http = require('https').createServer(httpscred, app)
@@ -23,19 +24,6 @@ const setPlayerScore = require('./listener/setplayerscore')
 const disconnect = require('./listener/disconnect')
 const emitListRoom = require('./emitter/listroom')
 const Multer = require('multer');
-const storeImage = {
-  storage: Multer.diskStorage({
-    destination: function (req, file, next) {
-      next(null, './public')
-    },
-    filename: function (req, file, next) {
-      let {
-        username,
-      } = req.body
-      next(null, `${username}.png`);
-    }
-  })
-}
 
 const memoryStorage = {
   storage: Multer.MemoryStorage,
