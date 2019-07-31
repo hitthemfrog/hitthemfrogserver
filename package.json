@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "coverage": "npm test -- --coverage --runInBand --watchAll --detectOpenHandles",
+    "coverage": "npm test -- --coverage --detectOpenHandles",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -27,6 +27,7 @@
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
-    "jest": "^24.8.0"
+    "jest": "^24.8.0",
+    "supertest": "^4.0.2"
   }
 }
