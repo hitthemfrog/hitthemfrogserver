@@ -45,8 +45,6 @@ module.exports  = ({
     }
     
     
-    // console.log({player1totalEmit, player2totalEmit, player1score, player2score})
-    
     if (allPlayerActive && player1totalEmit >= 5 && player2totalEmit >= 5) {
       if (player1score > player2score) {
         winner = player1.name
