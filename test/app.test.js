@@ -437,7 +437,7 @@ describe('Socket test suit', function () {
     return new Promise((resolve, reject) => {
       socket1.on('listRoom', (rooms) => {
         try {
-          expect(rooms[0].name).toEqual('room1')
+          expect(rooms[0].name).toEqual('room8')
         } catch (err) {
           reject(err)
         }
@@ -445,11 +445,11 @@ describe('Socket test suit', function () {
       })
 
       socket1.emit(`joinRoom`, {
-        roomName: 'room1',
+        roomName: 'room8',
         playerName: 'playerName'
       }, (value) => {
         expect(value).toEqual(true);
-        socket1.emit('leaveRoom', 'room1')
+        socket1.emit('leaveRoom', 'room8')
       })
 
     })
