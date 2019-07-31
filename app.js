@@ -6,6 +6,7 @@ const cors = require('cors')
 const { GAME_STATUS } = require('./types')
 let http 
 
+/* istanbul ignore next */
 if (process.env.NODE_ENV === 'production') {
   const httpscred = require('./https.cred')
   http = require('https').createServer(httpscred, app)
