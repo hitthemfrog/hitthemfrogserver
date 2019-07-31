@@ -13,9 +13,7 @@ describe('Http request test suit', function () {
   })
 
   afterEach((done) => {
-    console.log('auouaouoauo')
     http.close(() => {
-      console.log('exit server')
       setImmediate(function(){http.emit('close')});
       done()
     })
