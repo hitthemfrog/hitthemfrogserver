@@ -15,10 +15,11 @@ module.exports  = ({
     let room = appRoom[playerDataObj.room]
     let player1 = room.players[0]
     let player2 = room.players[1]
+    let activePlayer = room.players[index];
 
-    room.players[index].hit = playerDataObj.hit
-    room.players[index].miss = playerDataObj.miss
-  
+    activePlayer.hit = playerDataObj.hit
+    activePlayer.miss = playerDataObj.miss
+    
     if (player1 && player1.miss == '5') {
       winner = player2.name
       emitIsGameFinished(io, playerDataObj.room, winner, room.players)
