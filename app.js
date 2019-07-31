@@ -97,12 +97,12 @@ io.on('connection', function (socket) {
   });
 });
 
-http.listen(port, function () {
+const test = http.listen(port, function () {
   console.log('listening to port', port);
 });
 
 module.exports = {
-  http,
+  http: test,
   appRoom,
   activePlayer
 }

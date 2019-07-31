@@ -6,14 +6,15 @@ let socket1;
 let socket2;
 let socket3;
 
-afterAll((done) => {
-  // fs.unlinkSync('public/test-image.png')
-  http.close(() => {
-    done()
-  })
-})
 
 describe('Socket test suit', function () {
+  afterAll((done) => {
+    // fs.unlinkSync('public/test-image.png')
+    http.close(() => {
+      done()
+    })
+  })
+  
   beforeEach(function (done) {
     socket1 = io('http://localhost:3333', {
       forceNew: true

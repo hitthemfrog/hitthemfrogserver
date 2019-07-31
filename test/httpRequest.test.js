@@ -4,15 +4,23 @@ const {
   http
 } = require('../app')
 
-afterAll((done) => {
-  fs.unlinkSync('public/test-image.png')
-  http.close(() => {
-    console.log('exit server')
-    done()
-  })
-});
 
 describe('Http request test suit', function () {
+  
+  afterAll(done => {
+    fs.unlinkSync('public/test-image.png')
+
+  })
+
+  afterEach((done) => {
+    console.log('auouaouoauo')
+    http.close(() => {
+      console.log('exit server')
+      setImmediate(function(){http.emit('close')});
+      done()
+    })
+
+  });
   test('upload image test', (done) => {
     request(http)
       .post('/uploadImage')
@@ -24,6 +32,7 @@ describe('Http request test suit', function () {
       })
       .catch((err) => {
         console.log(err);
+        done()
       });
   });
 
@@ -36,6 +45,8 @@ describe('Http request test suit', function () {
       })
       .catch((err) => {
         console.log(err);
+        done()
+
       });
   });
 
@@ -51,8 +62,12 @@ describe('Http request test suit', function () {
           .field('username', 'test-image')
           .attach('image', `${__dirname}/image/1024px-Octicons-mark-github.svg.png`)
           .then((response) => {
+            done()
+
           })
           .catch((err) => {
+            done()
+
           });
       })
       .catch((err) => {
