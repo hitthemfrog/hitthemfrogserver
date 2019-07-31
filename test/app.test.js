@@ -14,7 +14,7 @@ afterAll((done) => {
   })
 })
 
-describe('Socket test suit for Room', function () {
+describe('Socket test suit', function () {
   beforeEach(function (done) {
     socket1 = io('http://localhost:3333', {
       forceNew: true
