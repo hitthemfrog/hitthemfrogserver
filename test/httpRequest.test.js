@@ -39,7 +39,7 @@ describe('Http request test suit', function () {
       });
   });
 
-  test('upload image with same username test', (done) => {
+  test('upload image with same username test, matcher result should equal to username exists', (done) => {
     request(http)
       .post('/uploadImage')
       .field('username', 'test-image')
@@ -56,6 +56,7 @@ describe('Http request test suit', function () {
           });
       })
       .catch((err) => {
+        expect(err.matcherResult.actual).toEqual('username exists')
         done();
       });
   });
