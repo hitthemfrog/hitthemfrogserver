@@ -10,7 +10,6 @@ let socket3;
 
 afterAll((done) => {
   http.close(() => {
-    console.log('exit server')
     done()
   })
 })
@@ -37,18 +36,6 @@ describe('Socket test suit for Room', function () {
       })
     })
 
-    // deleteAllRooms()
-    // socket1.on('disconnect', function () {
-    //   console.log('socket1 disconnected...');
-    // })
-
-    // socket2.on('disconnect', function () {
-    //   console.log('socket2 disconnected...');
-    // })
-
-    // socket3.on('disconnect', function () {
-    //   console.log('socket3 disconnected...');
-    // })
   });
 
   afterEach(function (done) {
@@ -59,21 +46,21 @@ describe('Socket test suit for Room', function () {
       socket1.disconnect();
     } else {
       // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
-      console.log('no connection to break...');
+      // console.log('no connection to break...');
     }
 
     if (socket2.connected) {
       socket2.disconnect();
     } else {
       // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
-      console.log('no connection to break...');
+      // console.log('no connection to break...');
     }
 
     if (socket3.connected) {
       socket3.disconnect();
     } else {
       // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
-      console.log('no connection to break...');
+      // console.log('no connection to break...');
     }
 
 
@@ -401,18 +388,25 @@ describe('Socket test suit for Room', function () {
   });
 
   test('listRoom test', () => {
+    
     return new Promise((resolve, reject) => {
       socket1.on('listRoom', (rooms) => {
         try {
-          // expect(rooms[0].name).toEqual('room6')
-          console.log(rooms);
+          console.log({rooms});
+          expect(rooms[0].name).toEqual('toto')
+          resolve()
         } catch (err) {
           reject(err)
         }
-        resolve()
       })
-  
-      socket1.emit(`checkRoom`);
+      appRoom['room6'] = {
+        name: 'room6'
+      }
+      socket1.emit(`joinRoom`, {playerName: 'joni', roomName: 'toto'}, function (val) {
+        if (val) {
+          socket1.emit(`checkRoom`);
+        }
+      })
   
     });
   });

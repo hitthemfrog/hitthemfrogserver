@@ -3,6 +3,7 @@ const app = express()
 const port = process.env.PORT || 3333
 const fs = require('fs')
 const cors = require('cors')
+const { GAME_STATUS } = require('./types')
 let http 
 
 if (process.env.NODE_ENV === 'production') {
@@ -72,7 +73,6 @@ const activePlayer = {}
 
 
 io.on('connection', function (socket) {
-  console.log('a user connected');
   const nsp = io.of('/')
   const socketRooms = nsp.adapter.rooms
   const socketListenerData = {
@@ -87,6 +87,19 @@ io.on('connection', function (socket) {
   socket.on('setPlayerScore', setPlayerScore(socketListenerData))
   socket.on('disconnect', disconnect(socketListenerData))
   socket.on('checkRoom', () => emitListRoom(io, appRoom))
+  socket.on('playerReady', ({roomName, playerName}) => {
+    let players = appRoom[roomName].players
+    let player = players.find(e => e.name === playerName)
+    player.ready = true
+    let isAllPlayerReady = players.reduce((acc, e) => {
+      acc = acc && e.ready === true
+      return acc
+    }, true)
+    if (isAllPlayerReady) {
+      appRoom[roomName].gameStatus = GAME_STATUS.STARTED 
+    }
+    emitListRoom(io, appRoom)
+  })
 
   socket.on('leaveRoom', function(roomName) {
     socket.leave(roomName, () => {

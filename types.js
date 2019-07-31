@@ -12,7 +12,8 @@ function createPlayer(name) {
   return {
     name,
     hit: 0,
-    miss: 0
+    miss: 0,
+    ready: false
   }
 }
 
