@@ -1,14 +1,13 @@
 const io = require('socket.io-client');
 const {
-  http,
-  appRoom,
-  activePlayer
+  http
 } = require('../app')
 let socket1;
 let socket2;
 let socket3;
 
 afterAll((done) => {
+  // fs.unlinkSync('public/test-image.png')
   http.close(() => {
     done()
   })
@@ -409,6 +408,28 @@ describe('Socket test suit', function () {
       })
   
     });
+  });
+
+  test('one user leave room', () => {
+    return new Promise((resolve, reject) => {
+      socket1.on('listRoom', (rooms) => {
+        try {
+          expect(rooms[0].name).toEqual('room8')
+        } catch (err) {
+          reject(err)
+        }
+        resolve()
+      })
+
+      socket1.emit(`joinRoom`, {
+        roomName: 'room8',
+        playerName: 'playerName'
+      }, (value) => {
+        expect(value).toEqual(true);
+        socket1.emit('leaveRoom', 'room8')
+      })
+
+    })
   });
 });
 

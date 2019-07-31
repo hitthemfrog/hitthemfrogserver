@@ -23,19 +23,6 @@ const setPlayerScore = require('./listener/setplayerscore')
 const disconnect = require('./listener/disconnect')
 const emitListRoom = require('./emitter/listroom')
 const Multer = require('multer');
-const storeImage = {
-  storage: Multer.diskStorage({
-    destination: function (req, file, next) {
-      next(null, './public')
-    },
-    filename: function (req, file, next) {
-      let {
-        username,
-      } = req.body
-      next(null, `${username}.png`);
-    }
-  })
-}
 
 const memoryStorage = {
   storage: Multer.MemoryStorage,
